@@ -1,0 +1,41 @@
+{
+  "name": "arasaac-watcher",
+  "version": "1.0.0",
+  "description": "Watcher for changes in ARASAAC files. Generate zip files when dir changes, resize images...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "node svgwatcher.js",
+    "start": "nodemon --max_old_space_size=3000 --ignore 'node_modules' --ignore 'svg' --ignore 'pictograms' --inspect=0.0.0.0:9229 --trace-deprecation svgwatcher.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juanda99/arasaac-watcher.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juanda99/arasaac-watcher/issues"
+  },
+  "homepage": "https://github.com/juanda99/arasaac-watcher#readme",
+  "dependencies": {
+    "arr-flatten": "^1.1.0",
+    "async": "^2.6.2",
+    "chokidar": "^3.3.0",
+    "d3-queue": "^3.0.7",
+    "fs-extra": "^7.0.1",
+    "imagemin": "^6.0.0",
+    "imagemin-pngquant": "^6.0.0",
+    "sharp": "0.26.3",
+    "winston": "3.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.13.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "nodemon": "^1.18.4"
+  }
+}
