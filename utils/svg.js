@@ -11,7 +11,7 @@ const skin = {
   black: '#A65C17',
   assian: '#F4ECAD',
   mulatto: '#E3AB72',
-  aztec: '#CF9D7C'
+  aztec: '#CF9D7C',
 }
 
 const schematic = '#FEFEFE'
@@ -23,17 +23,17 @@ const hair = {
   black: '#020100',
   gray: '#EFEFEF',
   darkGray: '#AAABAB',
-  darkBrown: '#6A2703'
+  darkBrown: '#6A2703',
 }
 
 /* variations we need depending on resolution */
 const preCompiledOptions = {
   300: { plural: true, action: true },
   500: { plural: true, action: true, color: true, peopleAppearance: true },
-  2500: { color: true, peopleAppearance: true }
+  2500: { color: true, peopleAppearance: true },
 }
 
-const getNextLayer = layer => {
+const getNextLayer = (layer) => {
   const layers = ['Fondo', 'contorno2', 'relleno', 'contorno']
   const layerIndex = layers.indexOf(layer) + 1
   if (layerIndex < 4) {
@@ -68,6 +68,8 @@ const getPNGFileName = async (file, options) => {
   if (hair) fileName = `${fileName}_hair-${hair.substr(1, 6)}`
   if (skin) fileName = `${fileName}_skin-${skin.substr(1, 6)}`
   fileName = `${fileName}_${resolution}`
+  // added line to createPNGfiles, here not needed now,
+  // but was not working here???
   await fs.ensureDir(path.resolve(IMAGE_DIR, idFile))
   return path.resolve(IMAGE_DIR, idFile, `${fileName}.png`)
 }
@@ -76,25 +78,25 @@ const getPeopleAppearanceOptions = (defaultValues, initOptions) => {
   const options = []
   // add skins:
   options.push(
-    Object.keys(skin).map(skinType => ({
+    Object.keys(skin).map((skinType) => ({
       skin: skin[skinType],
-      ...defaultValues
+      ...defaultValues,
     }))
   )
 
   options.push(
-    Object.keys(hair).map(hairType => ({
+    Object.keys(hair).map((hairType) => ({
       hair: hair[hairType],
-      ...defaultValues
+      ...defaultValues,
     }))
   )
   options.push(
     flatten(
-      Object.keys(skin).map(skinType =>
-        Object.keys(hair).map(hairType => ({
+      Object.keys(skin).map((skinType) =>
+        Object.keys(hair).map((hairType) => ({
           hair: hair[hairType],
           skin: skin[skinType],
-          ...defaultValues
+          ...defaultValues,
         }))
       )
     )
@@ -103,28 +105,28 @@ const getPeopleAppearanceOptions = (defaultValues, initOptions) => {
   if (initOptions.plural) {
     // add skins:
     options.push(
-      Object.keys(skin).map(skinType => ({
+      Object.keys(skin).map((skinType) => ({
         skin: skin[skinType],
         ...defaultValues,
-        plural: true
+        plural: true,
       }))
     )
 
     options.push(
-      Object.keys(hair).map(hairType => ({
+      Object.keys(hair).map((hairType) => ({
         hair: hair[hairType],
         ...defaultValues,
-        plural: true
+        plural: true,
       }))
     )
     options.push(
       flatten(
-        Object.keys(skin).map(skinType =>
-          Object.keys(hair).map(hairType => ({
+        Object.keys(skin).map((skinType) =>
+          Object.keys(hair).map((hairType) => ({
             hair: hair[hairType],
             skin: skin[skinType],
             ...defaultValues,
-            plural: true
+            plural: true,
           }))
         )
       )
@@ -132,31 +134,31 @@ const getPeopleAppearanceOptions = (defaultValues, initOptions) => {
   }
 
   if (initOptions.action) {
-    ['past', 'future'].forEach(action => {
+    ;['past', 'future'].forEach((action) => {
       // add skins:
       options.push(
-        Object.keys(skin).map(skinType => ({
+        Object.keys(skin).map((skinType) => ({
           skin: skin[skinType],
           ...defaultValues,
-          action
+          action,
         }))
       )
 
       options.push(
-        Object.keys(hair).map(hairType => ({
+        Object.keys(hair).map((hairType) => ({
           hair: hair[hairType],
           ...defaultValues,
-          action
+          action,
         }))
       )
       options.push(
         flatten(
-          Object.keys(skin).map(skinType =>
-            Object.keys(hair).map(hairType => ({
+          Object.keys(skin).map((skinType) =>
+            Object.keys(hair).map((hairType) => ({
               hair: hair[hairType],
               skin: skin[skinType],
               ...defaultValues,
-              action
+              action,
             }))
           )
         )
@@ -166,7 +168,7 @@ const getPeopleAppearanceOptions = (defaultValues, initOptions) => {
   return flatten(options)
 }
 
-const getOptions = resolution => {
+const getOptions = (resolution) => {
   const initOptions = preCompiledOptions[resolution]
   const colors = [true]
   if (initOptions.color) colors.push(false)
@@ -174,9 +176,9 @@ const getOptions = resolution => {
   const defaultValues = {
     resolution,
     color: true,
-    action: 'present'
+    action: 'present',
   }
-  colors.forEach(color => {
+  colors.forEach((color) => {
     options.push({ ...defaultValues, color })
     if (initOptions.plural) {
       options.push({ ...defaultValues, plural: true, color })
@@ -204,7 +206,7 @@ const modifySkin = (fileContent, key) => {
   return fileContent.replace(reSkin, skin[key] || key)
 }
 
-const hasSkin = fileContent => {
+const hasSkin = (fileContent) => {
   const reSkin = new RegExp(skinsToRemove, 'gim')
   return reSkin.test(fileContent)
 }
@@ -224,7 +226,7 @@ const modifyHair = (fileContent, key) => {
   const reHair = new RegExp(hairToRemove(), 'gim')
   return fileContent.replace(reHair, hair[key] || key)
 }
-const hasHair = fileContent => {
+const hasHair = (fileContent) => {
   const reHair = new RegExp(hairToRemove(), 'gim')
   return reHair.test(fileContent)
 }
@@ -241,7 +243,9 @@ const modifySVG = (fileContent, options) => {
   }
   if (!color) content = modifyLayer(content, 'relleno', '')
   if (action === 'future') content = addLayer(content, 'action', futureSVGCode)
-  else if (action === 'past') { content = addLayer(content, 'action', pastSVGCode) }
+  else if (action === 'past') {
+    content = addLayer(content, 'action', pastSVGCode)
+  }
   if (hair) content = modifyHair(content, hair)
   if (skin) content = modifySkin(content, skin)
 
@@ -253,9 +257,7 @@ const convertSVG = (fileContent, resolution) => {
   // density 450p is for 3125x image
   const density = parseInt(0.144 * resolution, 10)
   const fileBuffer = Buffer.from(fileContent)
-  return sharp(fileBuffer, { density })
-    .png()
-    .toBuffer()
+  return sharp(fileBuffer, { density }).png().toBuffer()
 }
 
 module.exports = {
@@ -265,5 +267,5 @@ module.exports = {
   modifySVG,
   hasSkin,
   hasHair,
-  preCompiledOptions
+  preCompiledOptions,
 }

@@ -9,10 +9,11 @@ const {
   convertSVG,
   modifySVG,
   hasHair,
-  hasSkin
+  hasSkin,
 } = require('./utils/svg')
 
 const SVG_DIR = '/svg'
+const IMAGE_DIR = process.env.IMAGE_DIR || '/pictograms'
 // env variable come as a string! Be careful!!
 const overwrite = process.env.OVERWRITE === '1'
 
@@ -24,9 +25,11 @@ const createPNGFiles = async (file, resolution) => {
 
   try {
     const svgContent = await fs.readFile(path.resolve(SVG_DIR, file), 'utf-8')
+    const idFile = path.basename(file, '.svg')
+    fs.ensureDirSync(path.resolve(IMAGE_DIR, idFile))
     const withHair = hasHair(svgContent)
     const withSkin = hasSkin(svgContent)
-    optionsArray.forEach(async options => {
+    optionsArray.forEach(async (options) => {
       if (options.hair && !withHair) return
       if (options.skin && !withSkin) return
       const fileName = await getPNGFileName(file, options)
@@ -36,12 +39,12 @@ const createPNGFiles = async (file, resolution) => {
         /* if we need to generate with a different hair or skin and code is not inside the svg, we don't use it */
         let newSVGContent = modifySVG(svgContent, options)
         convertSVG(newSVGContent, options.resolution)
-          .then(buffer =>
+          .then((buffer) =>
             imagemin.buffer(buffer, {
-              plugins: [imageminPngquant({ quality: '65-80', speed: 10 })]
+              plugins: [imageminPngquant({ quality: '65-80', speed: 10 })],
             })
           )
-          .then(buffer => {
+          .then((buffer) => {
             fs.open(fileName, 'w', function (err, fd) {
               if (err) {
                 throw new Error(`could not open file: ${err}`)
@@ -53,7 +56,7 @@ const createPNGFiles = async (file, resolution) => {
               })
             })
           })
-          .catch(err => {
+          .catch((err) => {
             logger.error(`ERROR GENERATING: ${fileName}: ${err.message}`)
           })
       }
